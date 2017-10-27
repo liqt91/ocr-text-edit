@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <style>
+        tr td a{
+            color:black;
+        }
+        tr td a:hover{
+            color:black;
+            text-decoration: none;
+            cursor:pointer;
+        }
+    </style>
+<div class="span12">
+    <table class="table table-hover">
+        <blockquote>
+				<p>
+					{{ item_name }}
+				</p>
+        </blockquote>
+        <thead>
+            <tr>
+                <th>
+                    编号
+                </th>
+                <th>
+                    键
+                </th>
+                <th>
+                    值
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for k in kvs %}
+                <tr id="{{ k }}">
+                    <td class="col-md-2">{{ loop.index }}</td>
+                    <td class="col-md-5"><a onclick="editKey(this)">{{ k }}</a></td>
+                    <td class="col-md-5"><a>{{ kvs[k] }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editKey(object) {
+        text = object.text;
+        parent = object.parentNode;
+        object.remove();
+        var inputText = $('<input type="text" class="form-control" id="' + text + '"></input>').val(text);
+        parent.appendChild(inputText[0]);
+
+    }
+</script>
+
+{% endblock %}

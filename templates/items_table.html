@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="span12">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    编号
+                </th>
+                <th>
+                    名称
+                </th>
+                <th>
+                    操作
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr id="item">
+                    <td class="col-md-2">{{ loop.index }}</td>
+                    <td class="col-md-8">{{ item }}</td>
+                    <td class="col-md-2">
+                        <a class="btn btn-info btn-mini" type="button" href="items/{{ item }}">编辑</a>
+                        <a class="btn btn-warning btn-mini" type="button">删除</a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
