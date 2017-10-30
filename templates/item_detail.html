@@ -10,6 +10,13 @@
             text-decoration: none;
             cursor:pointer;
         }
+        input.form-control{
+            height:30px;
+        }
+        div.input-group span button{
+            height: 30px;
+            font-size: 10px;
+        }
     </style>
 <div class="span12">
     <table class="table table-hover">
@@ -34,9 +41,18 @@
         <tbody>
             {% for k in kvs %}
                 <tr id="{{ k }}">
-                    <td class="col-md-2">{{ loop.index }}</td>
-                    <td class="col-md-5"><a onclick="editKey(this)">{{ k }}</a></td>
-                    <td class="col-md-5"><a>{{ kvs[k] }}</a></td>
+                    <td class="col-md-2" onmouseover="showEditButton(this)" onmouseleave="hideEditButton(this)">
+                        {{ loop.index }}
+                        <a onclick="delItem(this)" style="display: none; border: solid 1px" >删除</a>
+                    </td>
+                    <td class="col-md-4" id="key" onmouseover="showEditButton(this)" onmouseleave="hideEditButton(this)">
+                        <span>{{ k }}</span>
+                        <a onclick="editText(this,'key')" style="display: none; border: solid 1px" >修改</a>
+                    </td>
+                    <td class="col-md-6" id="value" onmouseover="showEditButton(this)" onmouseleave="hideEditButton(this)">
+                        <span>{{ kvs[k] }}</span>
+                        <a onclick="editText(this,'value')"  style="display: none; border: solid 1px">修改</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -44,13 +60,67 @@
 </div>
 
 <script>
-    function editKey(object) {
-        text = object.text;
-        parent = object.parentNode;
-        object.remove();
-        var inputText = $('<input type="text" class="form-control" id="' + text + '"></input>').val(text);
-        parent.appendChild(inputText[0]);
+    function showEditButton(object) {
+        $(object).find('a').show();
+    }
 
+    function hideEditButton(object){
+        $(object).find('a').hide();
+    }
+
+    function delItem(object) {
+        var key = $(object).parents('tr').attr('id');
+        console.log(key);
+        $.post('/items/' + name, {'key':key,'delete':'delete'}, function (res) {
+            if (res.code !== 200){
+                window.alert(res.msg);
+            }else{
+                window.location = window.location;
+            }
+        })
+    }
+
+    function editText(object, type) {
+        var span = $(object).siblings('span');
+        var text = span.text();
+        var parent = object.parentNode;
+{#        var trs = $(parent.parentNode).siblings();#}
+        object.remove();
+        span.remove();
+        var inputText = $('<input type="text" class="form-control" id="' + text + '"></input>').val(text);
+        var closeTag = $('<span class="input-group-btn"> ' +
+            '<button class="btn btn-default" type="button" onclick="saveText(this, \'' + type + '\')">' +
+            '<span class="glyphicon glyphicon-ok" aria-hidden="true">' +
+            '</span></button></span>');
+        var inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group';
+        inputGroup.appendChild(inputText[0]);
+        inputGroup.appendChild(closeTag[0]);
+        parent.appendChild(inputGroup);
+        parent.style.padding = '3px';
+    }
+
+    function saveText(object, type) {
+        var tr = $(object).parents('tr');
+        if(type === 'key'){
+            key = tr.find('td[id=key]').find('input').val();
+            value = tr.find('td[id=value]').find('span').text();
+        }else if(type === 'value'){
+            key = tr.find('td[id=key]').find('span').text();
+            value = tr.find('td[id=value]').find('input').val();
+        }
+        var origin = tr.attr('id');
+        var name = window.location.href.split('/').reverse()[0];
+        var data={'type':type,'key':key, 'value':value, 'origin':origin};
+        $.post('/items/' + name, data, function (res) {
+            if (res.msg){
+                if(res.code !== 200){
+                    window.alert(res.msg);
+                }else{
+                    window.location = window.location;
+                }
+            }
+        })
     }
 </script>
 
