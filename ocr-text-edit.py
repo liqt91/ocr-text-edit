@@ -19,13 +19,15 @@ sys.setdefaultencoding("utf-8")
 @app.route('/')
 def hello_world():
     #写入redis方法
-    d = {'名称':"东方财富信息股份有限公司",'纳税人识别号':'1234223432344234'}
-    redis_store.hmset('OCR.INVOICE.20171010.JPG',d)
+    d1 = {'名称':"东方财富信息股份有限公司",'纳税人识别号':'1234223432344234'}
+    d2 = {'test':'12321323','test2':'e4457567687'}
+    redis_store.hmset('OCR.INVOICE.20171010.JPG',d1)
+    redis_store.hmset('OCR.XXXXXXX.20171012.JPG',d2)
     #读取redis方法
     result = redis_store.hgetall('OCR.INVOICE.20171010.JPG')
     result = json.dumps(result ,ensure_ascii=False)
     # return render_template("items_table.html", result = result)
-    return redirect(url_for('getItems',name='OCR.INVOICE.20171010.JPG'))
+    return redirect(url_for('getItems'))
 
 @app.route('/items',methods=['GET','POST'])
 @app.route('/items/<string:name>',methods=['GET','POST'])
@@ -64,4 +66,4 @@ def getItems(name=None):
                     pipe.execute()
             return jsonify(msg='修改成功',code=200)
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
