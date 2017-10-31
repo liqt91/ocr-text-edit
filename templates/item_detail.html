@@ -81,6 +81,8 @@
     }
 
     function editText(object, type) {
+        var tds = $('td');
+        tds.attr('onmouseover', '');
         var span = $(object).siblings('span');
         var text = span.text();
         var parent = object.parentNode;
@@ -101,6 +103,8 @@
     }
 
     function saveText(object, type) {
+        var tds = $('td');
+        tds.attr('onmouseover', 'showEditButton(this)');
         var tr = $(object).parents('tr');
         if(type === 'key'){
             key = tr.find('td[id=key]').find('input').val();
